@@ -5,7 +5,7 @@
   vars:
     hostname: 172.16.1.1
     username: ansible
-    password: AnsibleUse
+    password: 
   module_defaults:
     group/community.routeros.api:
       hostname: "{{ hostname }}"
