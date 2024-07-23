@@ -1,0 +1,136 @@
+{
+:local readKeyString do={
+# keyFlag show if the input was caused by a key pressing, firstDisplay is showing if the input was pre-provided by $4 
+# Default characters allowed to use.
+:set $errorName "characters"; #default error name.
+:set $sound "\a"; # Warning sound. Put a "#" in front to silence it.
+:set $upKey  false; # set $upKey to false to not indicate default a manual change of a earlier entry. 
+:set $endKey false; # set $endKey to false
+ :set $ASCI " !\" \$ &'()*+,-./0123456789:;<=>\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}"; # allowed characters to be typed.
+ :set $control [:pick $2 ([:find $2 ":"]) [:len $2]]; :set $2 [:pick $2 0 ([:find $2 ":"]+1)]; # Fill $control with the provided values in $2
+ :if [:find $control *] do={:set $hide true;:set $unHide false} else={:set $hide false}
+ :if [:find $control #] do={:set $allowedASCI "0123456789";:set $controlASCI "#";:set $errorName "numbers"};	# numbers allowed.
+ :if [:find $control @] do={:set $allowedASCI "+-.0123456789@ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz";:set $controlASCI "@";:set $endCheck true;:set $endCheckRegex "^[a-z0-9.+_-]+\\@[a-z]+\\.[a-z]{2,7}\$"}; # e-mail address.
+ :if [:find $control /] do={:set $allowedASCI "!\$&()*+,-./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz";:set $controlASCI "/";:set $endCheck true;:set $endCheckRegex "[\\.|^][a-z0-9._-]+\\.[a-z]{2,7}[/]{0,1}[a-zA-Z0-9\$_.+!*(),-]*"}; # web address.
+ :if [:find $control I] do={:set $allowedASCI "/.0123456789";:set $controlASCI "I";:set $endCheck true;:set $errorName "IPv4 address";
+ :set $endCheckRegex "^(25[0-5]|2[0-4][0-9]|[01][0-9][0-9]|[0-9][0-9]|[[0-9])\\.(25[0-5]|2[0-4][0-9]|[01][0-9][0-9]|[0-9][0-9]|[[0-9])\\.(25[0-5]|2[0-4][0-9]|[01][0-9][0-9]|[0-9][0-9]|[[0-9])\\.(25[0-5]|2[0-4][0-9]|[01][0-9][0-9]|[0-9][0-9]|[[0-9])(/(3[0-2]|2[0-9]|[1][0-9]|[0-9]))\?\$"}; # numbers and special signs allowed.
+     
+ :if [:find $control 6] do={:set $allowedASCI " :/0123456789";:set $controlASCI "#";:set $errorName "IPv6 address"}; # numbers and special signs allowed.
+ 
+ # (3[0-2]|2[0-9]|[1][0-9]|[0-9]) CIDR Or :put [:typeof (255.168.21.7/24 in 0.0.0.0/0)] bool is ok and if nothing the the IP address was invalid.
+  
+ :set $minLength [:pick $3 0 [:find $3 "-"]]
+ :set $maxLength [:pick $3 ([:find $3 "-"]+1) [:len $3]]
+ :if  $hide   do={:set $1 "$1 TAB key shows entry."}; # Add to help text that the hidden content can be made visible
+ # Adds the minimal an maximal length displayed in the Help line. If no length is defined then nothing is displayed.  
+ :if ($minLength = $maxLength && $minLength != 0) do={:set $1 "$1 (Set length: $maxLength )"} else={
+   :if ($minLength=0 && $maxLength>0 && $maxLength!=255)	do={:set $1 "$1 (Maximal length: $maxLength)"}
+   :if ($minLength>0 && $maxLength>0 && $maxLength!=255)	do={:set $1 "$1 (Minimal length: $minLength, maximal length: $maxLength)"}
+   :if ($minLength>0 && $maxLength=255) 			do={:set $1 "$1 (Minimal length: $minLength)"} }   
+ :te st varname-local; :te el; :put "> Help:\t $1"; :te cuu; :te cuu; :te st syntax-noterm; # Displays the (adapted) help text
+ :local i 0xFFFF; :set $keyFlag false; [:te el];:set $firstDisplay true;
+ :put "$2 _"; # write first time the label with a cursor (_)
+ 
+ :if ([:len $4] > $maxLength) do={[:te cuu;:te st varname]; :put "$2 $display \t Ignored the provided entry. Enter one yourself.$sound"; [:te st none];:set $4;:set $keyFlag false}
+ :if ([:len $4] < $minLength && [:len $4] > 0) do={[:te cuu;:te st varname]; :put "$2 $4 \t Error: the pre-provided entry is to short. Add to, or replace this entry.$sound"; [:te st none]; :set $display $4;:set $readString $4;:set $4}
+ 
+ :do {
+  
+  :while ( (!$endKey) ) do={
+    :if ([:len $readString] > 0) do={    
+      :if ($i=8) do={:set $keyFlag false; :set $readString "$[:pick $readString 0 ([:len $readString]-1)]"; :set $display "$[:pick $display 0 ([:len $readString])]"}      
+      :if (($i=9) && $hide && (!$unHide))	do={:set $unHide true; :set $tempDisplay $display;:set $keyFlag false;:set $i}
+      :if (($i=9) && $unHide && $hide)		do={:set $unHide false;:set $display [:pick "$tempDisplay******************" 0 [:len $readString]];:set $keyFlag false;:set $i} }            
+    :if $keyFlag 			do={:set $temp "$[:pick $ASCI ($i-32) ($i-31)]";}; :set $i;
+   
+    :if [:find $control $controlASCI]	do={:if ([:find $allowedASCI $temp] >= 0) do={} else={:set $temp} }
+    
+    :if (([:typeof $temp]~"(nil|nothing)" && $keyFlag) && (!$firstDisplay)) do={[:te cuu;:te el;:te st varname];:put "$2 $display \t ERROR: ignored invalid key input.$sound"; [:te st none];:set $keyFlag false}
+    
+    :if (!firstDisplay) do={       
+    :if (([:len $readString] >= $maxLength) && $keyFlag) do={[:te cuu;:te st varname]; :put "$2 $display \t Error: maximal $maxLength $errorName allowed.$sound";	[:te st none]; :set $temp; :set $keyFlag false} }    
+    :if $keyFlag do={:set $readString "$readString$temp"};	                                        # Here the accepted character is added to $readString as long the length is less than maximum 
+    :if ($hide) do={:if $keyFlag do={:set $display "$display*"};} else={:set $display $readString};	# Sets the displayed text 
+    :if ($unHide) do={:set $display $readString};	                                                # Unhide text that is hidden when pressing the TAB key
+    :if $firstDisplay do={:set $display $4;:set $readString $5;:set $firstDisplay false;:set $4;:set $5};	# Sets display to the provided string if it is the first view
+   
+ # Loop that displays and wait for a key to be pressed         
+   :do {[:te cuu]; :put "$2 $display_ "; :set $i [:te in 500ms]; :if ($i=0xFFFF) do={[:te cuu;]; :put "$2 $display  "; :set $i [:te in 500ms]}} while=($i=0xFFFF); :set $keyFlag true; 
+   [:te cuu;:te el]; :put "$2 $display  "; # erases any error messages shown
+   :if ($i=60932) do={:set $i 13}; # The arrow down key is the same here as the Enter key and any changes will be checked this way.
+   :if ($i=13 || $i=60931) do={:set $endKey true}; # This will enable to use one value to indicate the completion of the entry or go for an other entry up to for editing.
+  }; #while=( (!$endKey)....
+  :if ($i != 60931) do={ # Skip checks because these values where already checked before.
+   :if ($unHide) do={[:te cuu;:te el]; :put "$2 $tempDisplay"; :set $display $tempDisplay}; # On exit hide the text again, which was made visible by using the TAB key.   
+   :if (([:len $readString]>0)&&([:len $readString]<$minLength)) do={[:te cuu;:te st varname]; :put "$2 $display \t Error: not enough $errorName entered. Minimal length is: $minLength.$sound";[:te st none]; :set $endkey false;:set $keyFlag false}
+   :if (([:len $readString] = 0) && ($minLength > 0)) do={[:te cuu;:te st varname]; :put "$2 $display \t Error: this entry can't be left empty.$sound";	[:te st none]; :set $endKey false;:set $keyFlag false}  
+   :if ($endCheck) do={
+    :if ($readString ~ $endCheckRegex) do={:set $endCheck false} else={[:te cuu;:te st varname]; :put "$2 $display \t Error: format of entry is incorrect. See example in help underneath.$sound"; [:te st none]; :set $keyFlag false; :set $endKey false} }; # :if ($endcheck..
+  } else={:set $upKey true}; # Skip the checks if change up to an other entry. $readString should be destroyed and ignored on return.
+ :set $endKey false
+ } while ((([:len $readString] < $minLength) || $endCheck) && $i != 60931 );  #while check minium
+ #:log info "$upKey $i"
+ :return {$readString;$display;$upKey}
+}; # End of function readKeyString, the value where returned to the caller, saved there in an array
+
+#####################################################################################################################
+# defining variables and assign to them values if needed.
+#:local readKeyString; # needed if is called to the :global
+:global arrayResult   [:toarray ""]; :local arrayLabel [:toarray ""]; :local arrayControl [:toarray ""]; :global arrayDisplay [:toarray ""]
+:set $keyString "123456789abcdefghijklmnopqrstuvwxyz"; # Limits the number of menu items and acts a sequencer of the menuitems.
+# Store menu in an array
+# The number/letters defines the sequence of in the menu, description/help and then the show menu item with always a ":".
+# If needed a minimal and maximal length that should be entered and then control characters:
+# @ = e-mail addres, / = web/url, # = numbers and * = should not be displayed 
+:set $arrayLabel { "7 IPv4 address 192.168.0.1"="IPv4 address:I";
+		   "1 Login name which you want to use for this device."="Login name:1-15";
+                   "2 Enter or change password."="Your password:4-8*";
+                   "3 Pin"="Pin:4-4#*";
+                   "4 Remark"="Remark 2:"
+                   "z Are all entries correct. If not use ARROW-UP to correct. Then press ENTER."="Ready:"}
+                   #"5 Webpage Example: (www.)mikrotik.com"="Webpage:/";
+                   #"6 e-mail address (example: you@mail.com)"="E-mail:@"
+
+# The control characters used in $arrayLabel should be present in $arraControl. Manual entry needed in the key requests and error messages.                   
+ :set $arrayControl {"/";"@";"#";"*";"I";"P"}; # URL e-mail number hidden	#"8 IPv6 address 192.168.0.1"="IPv4 address:P";}                  
+# Fill the support array with their assinged values.
+ :for i from=0 to=([:len $arrayLabel]-1) do={:set $a [:pick $arrayLabel $i];:set $a "$[:pick $keyString $i ($i+1)]$[:pick $a 0 ([:find $a ":"]+1)]";:set ($arrayDisplay->"$a") ""}; # Fill $arraydisplay with labels
+ :for i from=0 to=([:len $arrayDisplay]-1) do={:set $h $i; :set $a [:tostr [:pick $arrayDisplay $i ($i+1)]]; :set $a [:pick $a 0 [:find $a "="]]}
+ :set $count 0; # set to default value                 
+# Prints the header of the menue
+ :put "- Mikrotik Menu -"
+ :put "----------------"
+# Writes out the full menu and then return to the first line of th menu
+ :foreach label,value in $arrayDisplay do={:put "$[:pick $label 1 [:len $label]] $value"};	# Shows the whole menu.
+ :for i from=0 to=([:len $arrayDisplay]-1) do={:te cuu};	                                # Goes to the top of the shown menu. 
+# Starting the calls to the readkey function.
+:while ($count <= ([:len $arrayLabel]-1)) do={
+
+:set $a [:tostr [:pick $arrayDisplay $Count ($count+1)]]; :set $label [:pick $a 1 [:find $a "="]]; # Gets the $label of the next menu-item and cleans it up.
+:if (($returnArray->2) && $count = 0) do={} else={:put $label}; # Only display the label if it is a first display
+:set $label	[:pic $arrayLabel $count]; # Gets the $label
+:set $descriptLabel [:tostr [:pick $arrayLabel $count ($count+1)]];	# gets the array string including the key.
+:set $descript [:pick $descriptLabel 2 [:find $descriptLabel "="]];	# Get key of array...why is that made so difficult. Also removes the first two index characters in one go.
+
+# getting control characters and this can be simplified by adding a extra parameter to the called function
+ :set $length;
+ :set $control [:pick $label ([:find $label ":"]+1) [:len $label]]
+ :set $label [:pick $label 0 ([:find $label ":"]+1)]; # restore the label without the number for length
+ :foreach findControl in=$arrayControl do={
+  :foreach findControl in=$arrayControl do={:if ([:typeof [:find $control $findControl ([:len $control]-2)]] != "nil") do={:set $control [:pick $control 0 ([:len $control]-1)]; :set $label "$label$findControl"}} 
+ }; # nibling control away, to obtain only the $length and add at the same time those to $label
+ :set $length $control; # The leftover is the lenght if defined.
+ :set $control; # Erase $control
+ 
+#:put "Label: $label / control: $control / length: $length / descript: $descript \n\n\n\n"
+#:error ""
+
+#:set $descript [:pick $descript 2 ([:len $descript])]; # Remove the first two characters of the string. These are only used to order the fields in the array.
+ :if ([:len $length] = 0) do={:set $length "0-255"}; # Always set a length even if it is zero zero
+#:log info "count: $count / return: $($returnArray->2)"
+# Call to function
+#:set $show "PassWord"
+ :set $returnArray [$readKeyString $descript $label $length [:pick $arrayDisplay $count] [:pick $arrayResult $count]]; 	# Call to function
+ :if (($returnArray->2) && $count > 0) do={[:te el]; :put "$[:pick $label 0 ([:find $label :]+1)] $[:pick $arrayDisplay $count]";[:te cuu;:te cuu];:set $count (count-1); :if ($count > 0) do={[:te cuu]} } else={
+   :set $resultString	($returnArray->0);:set $displayString	($returnArray->1); # Get the result and display values from the array 
+# put a number/letter from $keyString in front of the label so that sequence in which the array stays as entered. (no auto so
