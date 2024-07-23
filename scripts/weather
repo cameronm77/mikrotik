@@ -6,8 +6,8 @@
     :local format 2
     # list of city to show in menu 
     :local cities {
-        b="Bloomington"
-        s="Springfield"
+        b="Bloomington-il"
+        s="Springfield-il"
         d="Decatur"
         c="Champaign"
         ch="Chicago"
