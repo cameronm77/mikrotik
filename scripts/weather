@@ -1,0 +1,34 @@
+# requires $QKEYS be loaded before calling
+
+:global wttr do={
+    :global QKEYS
+    # https:///wttr.in support several formats, one-liner is 2
+    :local format 2
+    # list of city to show in menu 
+    :local cities {
+        b="Bloomington"
+        s="Springfield"
+        d="Decatur"
+        c="Champaign"
+        ch="Chicago"
+        p="Peoria"
+    }
+    # dynamically build the array needed for $QKEYS
+    :local keymap [:toarray ""]
+    :foreach key,city in=$cities do={
+        :set ($keymap->$key) [:toarray ""]
+        :set ($keymap->$key->0) $city
+        :set ($keymap->$key->1) (>([/tool/fetch url="https://wttr.in/$urlcity?format=$fmt" output=user as-value]->"data"))
+        # provide a 3rd arg to $QKEYS, so enable substitution in url
+        :set ($keymap->$key->2) {
+            urlcity=[:convert $city to=url]
+            fmt=$format
+        }
+    }
+    # :if ($1="dump") do={:put [:serialize to=json $keymap options=json.pretty]}
+
+    $QKEYS inline=no $keymap
+}
+
+# now run the '$wttr' menu 
+$wttr
