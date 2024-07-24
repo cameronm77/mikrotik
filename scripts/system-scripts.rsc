@@ -1,5 +1,5 @@
 /system script
-add dont-require-permissions=no name=Faled_Login_Script owner=cmilani policy=\
+add dont-require-permissions=no name=Faled_Login_Script owner=admin policy=\
     ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon source="/\
     log\r\
     \n:global failmsg  \"login failure for user \"\r\
@@ -25,7 +25,7 @@ add dont-require-permissions=no name=Faled_Login_Script owner=cmilani policy=\
     \n         }\r\
     \n    }\r\
     \n}"
-add dont-require-permissions=no name=Failed_Login_no_User_Exist owner=cmilani \
+add dont-require-permissions=no name=Failed_Login_no_User_Exist owner=admin \
     policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive,romon \
     source="/log\r\
     \n:global failmsg  \"login failure for user \"\r\
