@@ -10,7 +10,7 @@ add add-arp=yes address-pool=HomeNetwork allow-dual-stack-queue=no \
     \_non-FQDN hostname\r\
     \n:local dnsAlwaysNonfqdn \"1\"\r\
     \n# DNS domain to add after DHCP client hostname\r\
-    \n:local dnsDomain \"cameronmilani.com\"\r\
+    \n:local dnsDomain \"YOURDOMAIN\"\r\
     \n# DNS TTL to set for DNS entries\r\
     \n:local dnsTtl \"00:15:00\"\r\
     \n# Source of DHCP client hostname, can be \"lease-hostname\" or any other\
