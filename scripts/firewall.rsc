@@ -15,18 +15,18 @@ add action=accept chain=input comment=\
 add action=accept chain=input comment="defconf: accept ICMP" disabled=yes \
     protocol=icmp
 add action=drop chain=input comment="Allow Connectivity to firewall" \
-    dst-address=172.16.1.1 dst-port=22,8291,8728,8729,80,443 \
+    dst-address=172.16.1.X dst-port=22,8291,8728,8729,80,443 \
     in-interface-list=!LAN log-prefix=RA-Firewall protocol=tcp \
     src-address-list=Admin
 add action=accept chain=input comment=\
     "defconf: accept to local loopback (for RouterOS Services)" dst-address=\
     127.0.0.1
 add action=accept chain=input comment="Allow Connectivity to firewall" \
-    dst-address=172.16.1.1 dst-port=22,8291,8728,8729,80,443 \
+    dst-address=172.16.1.X dst-port=22,8291,8728,8729,80,443 \
     in-interface-list=LAN log-prefix=RA-Firewall protocol=tcp \
     src-address-list=Admin
 add action=accept chain=input in-interface-list=LAN
-add action=accept chain=input comment=Wireguard dst-port=13231 log=yes \
+add action=accept chain=input comment=Wireguard dst-port=XXXXX log=yes \
     log-prefix=WG protocol=udp
 add action=accept chain=input comment=\
     "Allow everything from the Wireguard interface to the router" \
