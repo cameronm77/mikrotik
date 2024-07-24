@@ -1,5 +1,5 @@
 /ip firewall address-list
-add address=172.16.1.0/24 comment=Servers list=Admin
+add address=172.16.X.X/24 comment=Servers list=Admin
 add address=10.100.1.0/24 comment=Wireguard list=Admin
 add address=127.0.0.0/8 list=unexpected-src-address-hitting-ISP
 add address=169.254.0.0/16 list=unexpected-src-address-hitting-ISP
@@ -14,7 +14,7 @@ add address=240.0.0.0/5 list=unexpected-src-address-hitting-ISP
 add address=248.0.0.0/6 list=unexpected-src-address-hitting-ISP
 add address=252.0.0.0/7 list=unexpected-src-address-hitting-ISP
 add address=254.0.0.0/8 list=unexpected-src-address-hitting-ISP
-add address=172.16.1.0/24 comment="Current network" list=\
+add address=172.16.X.X/24 comment="Current network" list=\
     expected-address-from-LAN
 add address=224.0.0.0/4 comment=Multicast list=expected-address-from-LAN
 add address=255.255.255.255 comment=Local list=expected-address-from-LAN
@@ -73,36 +73,18 @@ add address=www.popcornflix.com list="Video Streaming Services"
 add address=www.contv.com list="Video Streaming Services"
 add address=classiccinemaonline.com list="Video Streaming Services"
 add address=tubitv.com list="Video Streaming Services"
-add address=10.100.1.0/24 list="Network Tunnels"
-add address=172.17.1.0/24 list=Admin
-add address=172.16.3.0/24 list=Admin
-add address=172.16.1.221 list=Sonos
-add address=172.16.1.222 list=Sonos
-add address=172.16.1.223 list=Sonos
-add address=172.16.1.220 list=Sonos
-add address=172.16.1.0/24 list=fragment_protected_IP
-add address=172.16.1.0/24 list=IP_used_on_LAN
-add address=10.10.1.0/24 list=fragment_protected_IP
-add address=10.100.1.0/24 list=IP_used_on_LAN_WG
-add address=172.16.1.0/24 list=IP_used_on_LAN_WG
-add address=172.16.1.57 comment=\
-    "login failure for user test from 172.16.1.57 via winbox" list=\
-    list_failed_attempt
-add address=192.168.30.0/24 list=IP_used_on_LAN
-add address=192.168.30.0/24 list=IP_used_on_LAN_WG
-add address=172.16.1.21 comment=\
-    "login failure for user admin from 172.16.1.21 via winbox" list=\
-    list_failed_attempt
-add address=10.100.1.100 comment=\
-    "login failure for user  from 10.100.1.100 via winbox" list=\
-    list_failed_attempt
-add address=172.16.1.91 comment=\
-    "login failure for user cmilani from 172.16.1.91 via winbox" list=\
-    list_failed_attempt
-add address=172.16.1.161 comment=\
-    "login failure for user cameronmilani from 172.16.1.161 via winbox" list=\
-    list_failed_attempt
-add address=10.16.0.1 comment=\
-    "login failure for user cmilani from 10.16.0.1 via web" list=\
-    list_failed_attempt
+add address=10.100.X.0/24 list="Network Tunnels"
+add address=172.17.X.0/24 list=Admin
+add address=172.16.X.0/24 list=Admin
+add address=172.16.X.X list=Sonos
+add address=172.16.X.X list=Sonos
+add address=172.16.X.X list=Sonos
+add address=172.16.X.X list=Sonos
+add address=172.16.X.0/24 list=fragment_protected_IP
+add address=172.16.X.0/24 list=IP_used_on_LAN
+add address=10.10.X.0/24 list=fragment_protected_IP
+add address=10.X.X.0/24 list=IP_used_on_LAN_WG
+add address=172.16.X.0/24 list=IP_used_on_LAN_WG
+add address=192.168.X.X/24 list=IP_used_on_LAN
+add address=192.168.X.X/24 list=IP_used_on_LAN_WG
 add address=9.9.9.9 comment=Quad9 list="DNS Servers"
