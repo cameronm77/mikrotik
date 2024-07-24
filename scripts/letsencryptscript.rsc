@@ -5,7 +5,7 @@
        /ip service set disabled=no [find where name="www"]
        /ip firewwall filter enable [find where comment=""LetsEncrypt"]
 
-       :local certName [get [find where common-name=$commName] name]
+       :local certName [get /certificate [find where common-name=$commName] name]
 
        /certificate remove $certName
        /certificate enable-ssl-certificate dns-name=$commName
