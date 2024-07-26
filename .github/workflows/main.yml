@@ -16,4 +16,4 @@ jobs:
         run:  bash ${GITHUB_WORKSPACE}/scripts/blumira.sh
 
       - name: Push back to github
-        run: git push
+        run: git push -u orgin
