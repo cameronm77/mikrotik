@@ -9,7 +9,7 @@ curl https://raw.githubusercontent.com/SecOps-Institute/Tor-IP-Addresses/master/
 curl https://www.spamhaus.org/drop/drop.txt -o spamhaus_drop.out -s
 curl https://www.spamhaus.org/drop/edrop.txt -o spamhaus_edrop.out -s
 curl https://sslbl.abuse.ch/blacklist/sslipblacklist.txt -o sslbl.out -s
-curl https://lists.blocklist.de/lists/all.txt-o blocklist_de.out -s
+curl https://lists.blocklist.de/lists/all.txt -o blocklist_de.out -s
 curl https://cinsscore.com/list/ci-badguys.txt -o cinsarmy.out -s
 curl https://feodotracker.abuse.ch/downloads/ipblocklist.txt -o feodo.out -s
 curl https://iplists.firehol.org/files/firehol_level1.netset -o firehol_l1.out -s
