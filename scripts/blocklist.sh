@@ -32,6 +32,6 @@ curl https://storage.googleapis.com/blumira_block_lists/51ab3aa4_66e9_4d9b_96ce_
 cat *.out | grep -Eo '(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))?' | awk '!/\//{$0=$0"/32"}{print}' | sed -E '/^(22[4-9]|23[0-9]|172\.16|52\.113\.194\.132|0\.)/d' | aggregate-prefixes | sed 's/\/32$//' | sed '$a\240.0.0.0/4' > $saveTo/blocklists.txt
 
 # Create array 
-cat blocklists.txt | awk '{print ":set newips (newips,\""$0"\")"}' > $saveTo/blocklists.rsc
+cat $saveTo/blocklists.txt | awk '{print ":set newips (newips,\""$0"\")"}' > $saveTo/blocklists.rsc
 sed -i '1 i\\:global newips \[\:toarray \"\"\]' $saveTo/blocklists.rsc
 
