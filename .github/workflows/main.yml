@@ -20,4 +20,4 @@ jobs:
         with:
           author_name: Cameron
           message: 'Blumira Updated script'
-          add: ~/scripts/blumira.rsc
+          add: '*.rsc'
