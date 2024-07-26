@@ -20,4 +20,4 @@ jobs:
         with:
           author_name: Cameron
           message: 'Blumira Updated script'
-          add: ${GITHUB_WORKSPACE}/scripts/blumira.rsc
+          add: /scripts/blumira.rsc
