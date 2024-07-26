@@ -6,18 +6,18 @@ on:
   
 jobs:
   runscript:
-    name: Blumira Blocklist
+    name: Blocklist
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         
       - name: Call a Bash Script
-        run:  bash ${GITHUB_WORKSPACE}/scripts/blumira.sh
+        run:  bash ${GITHUB_WORKSPACE}/scripts/blocklist.sh
 
       - name: Commit changes
         uses: EndBug/add-and-commit@v9
         with:
           author_name: Cameron
-          message: 'Blumira Updated script'
+          message: 'Blocklists Updated script'
           add: '*.rsc'
