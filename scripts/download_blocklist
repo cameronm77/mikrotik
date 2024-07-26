@@ -1,3 +1,0 @@
-:log info "blocklist-DL started"
-/tool fetch url="https://raw.githubusercontent.com/multiduplikator/mikrotik_blocklist/main/blocklist_ga_l.rsc" mode=https
-:log info "blocklist-DL finished"
