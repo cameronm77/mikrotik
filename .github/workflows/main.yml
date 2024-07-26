@@ -14,3 +14,10 @@ jobs:
         
       - name: Call a Bash Script
         run:  bash ${GITHUB_WORKSPACE}/scripts/blumira.sh
+
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v9
+        with:
+          author_name: Cameron
+          message: 'Blumira Updated script'
+          add: 'blumira.rsc'
