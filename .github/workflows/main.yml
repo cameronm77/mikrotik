@@ -8,4 +8,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Call a Bash Script
-        run:  bash ${GITHUB_WORKSPACE}/mikrotik/scripts/blumira.sh
+        run:  bash ${GITHUB_WORKSPACE}/scripts/blumira.sh
