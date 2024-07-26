@@ -6,8 +6,8 @@ on:
   
 jobs:
   runscript:
-    name: Example
+    name: Blumira Blocklist
     runs-on: ubuntu-latest
     steps:
       - name: Call a Bash Script
-        run:  bash ${GITHUB_WORKSPACE}scripts/blumira.sh
+        run:  bash -e /home/runner/work/mikrotik/scripts/blumira.sh
