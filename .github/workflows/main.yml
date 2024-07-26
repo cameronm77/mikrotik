@@ -13,4 +13,4 @@ jobs:
         uses: actions/checkout@v2
         
       - name: Call a Bash Script
-        run:  bash ${GITHUB_WORKSPACE}/blumira.sh
+        run:  bash ${GITHUB_WORKSPACE}/scripts/blumira.sh
