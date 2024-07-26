@@ -1,27 +1,27 @@
-:log info "Blumira Import: started"
+:log info "blocklist import: started"
 
 :local rbootver [/system routerboard get current-firmware]
 :local version ([:tonum [:pick $rbootver 0 1]]*10 + [:tonum [:pick $rbootver 2 3]])
 :local minversion 62
 
-:log info "Blumira Import: Detected ROS version $rbootver"
+:log info "blocklist-REP: Detected ROS version $rbootver"
 	
 :if ($version >= $minversion ) do={
-	:log info "Blumira Import: Running with error handling"
+	:log info "blocklist import: Running with error handling"
 } else={
-	:log info "Blumira Import: Running without error handling"
+	:log info "blocklist import: Running without error handling"
 }
 
-:log info "Blumira Import: disabling info"
+:log info "blocklist import: disabling info"
 /system logging disable 0
 
 :local duration [/system clock get time]
 
-/import file-name=blumira.rsc
+/import file-name=blocklists.rsc
 
 /ip firewall address-list
 
-:local prdkeys [find list=Blumira_Block_List]
+:local prdkeys [find list=blocklists]
 :global newips
 
 :local countnew 0
@@ -42,14 +42,14 @@
 	:if ($version >= $minversion ) do={
 		:foreach value in=$newips do={
 			:if ($value != "") do={
-				:do { add list=Blumira_Block_List address="$value" } on-error { :set counterror ($counterror+1) }
+				:do { add list=blocklists address="$value" } on-error { :set counterror ($counterror+1) }
 				:set countnew ($countnew+1)
 			}
 		}
 	} else={
 		:foreach value in=$newips do={
 			:if ($value != "") do={
-				add list=Blumira_Block_List address="$value"
+				add list=blocklists address="$value"
 				:set countnew ($countnew+1)
 			}
 		}	
@@ -60,10 +60,10 @@
 :set duration ([/system clock get time] - $duration)
 
 /system logging enable 0
-:log info "Blumira Import: finished - enabled info"
+:log info "blocklist import: finished - enabled info"
 
 :if ($version >= $minversion ) do={
-	:log info "Blumira Import: finished - $countremoved removed, $countnew new, $counterror errors, in $duration / $counttotal  total"
+	:log info "blocklist import: finished - $countremoved removed, $countnew new, $counterror errors, in $duration / $counttotal  total"
 } else={
-	:log info "Blumira Import: finished - $countremoved removed, $countnew new, in $duration / $counttotal  total"
+	:log info "blocklist import: finished - $countremoved removed, $countnew new, in $duration / $counttotal  total"
 }
