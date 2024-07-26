@@ -21,7 +21,7 @@
 
 /ip firewall address-list
 
-:local prdkeys [find list=blumira_blocklist]
+:local prdkeys [find list=Blumira_Block_List]
 :global newips
 
 :local countnew 0
@@ -42,14 +42,14 @@
 	:if ($version >= $minversion ) do={
 		:foreach value in=$newips do={
 			:if ($value != "") do={
-				:do { add list=blumira_blocklist address="$value" } on-error { :set counterror ($counterror+1) }
+				:do { add list=Blumira_Block_List address="$value" } on-error { :set counterror ($counterror+1) }
 				:set countnew ($countnew+1)
 			}
 		}
 	} else={
 		:foreach value in=$newips do={
 			:if ($value != "") do={
-				add list=blumira_blocklist address="$value"
+				add list=Blumira_Block_List address="$value"
 				:set countnew ($countnew+1)
 			}
 		}	
