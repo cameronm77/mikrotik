@@ -1,9 +1,8 @@
 
 on:
+  workflow_dispatch:
   schedule:
   - cron: "0 2 * * 1-5"
-on: 
-  worklow_dispatch:
   
 jobs:
   runscript:
